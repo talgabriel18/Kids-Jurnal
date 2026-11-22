@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Kids Jurnal" />
-  <meta name="theme-color" content="#f8fafc" />
+  <meta name="theme-color" content="#f3f6fa" id="metaThemeColor" />
   <title>Kids Jurnal — Baby Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -19,6 +19,23 @@
       --safe-bottom: env(safe-area-inset-bottom, 16px);
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
+      --bg-page: #f3f6fa;
+      --bg-card: #ffffff;
+      --bg-header: rgba(243, 246, 250, 0.88);
+      --bg-nav: rgba(255, 255, 255, 0.94);
+      --border-subtle: rgba(226, 232, 240, 0.85);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    html.dark {
+      --bg-page: #0b1120;
+      --bg-card: #151e32;
+      --bg-header: rgba(11, 17, 32, 0.88);
+      --bg-nav: rgba(21, 30, 50, 0.95);
+      --border-subtle: rgba(51, 65, 85, 0.65);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
     }
 
     * {
@@ -30,9 +47,10 @@
       margin: 0;
       padding: 0;
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: #f3f6fa;
-      color: #0f172a;
+      background-color: var(--bg-page);
+      color: var(--text-main);
       overflow-x: hidden;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
     .app-shell {
@@ -46,31 +64,73 @@
     }
 
     .glass-header {
-      background: rgba(243, 246, 250, 0.88);
+      background: var(--bg-header);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       padding-top: calc(var(--safe-top) + 10px);
       padding-bottom: 12px;
       padding-left: max(20px, calc(var(--safe-left) + 20px));
       padding-right: max(20px, calc(var(--safe-right) + 20px));
+      border-color: var(--border-subtle);
     }
 
     .bottom-nav {
-      background: rgba(255, 255, 255, 0.94);
+      background: var(--bg-nav);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       padding-top: 10px;
       padding-bottom: max(12px, var(--safe-bottom));
       padding-left: max(20px, calc(var(--safe-left) + 20px));
       padding-right: max(20px, calc(var(--safe-right) + 20px));
+      border-color: var(--border-subtle);
     }
 
     .card {
-      background: #ffffff;
+      background: var(--bg-card);
       border-radius: 22px;
       padding: 18px;
-      box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.05);
-      border: 1px solid rgba(226, 232, 240, 0.85);
+      box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.06);
+      border: 1px solid var(--border-subtle);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    html.dark .card {
+      box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Dark mode adaptive helpers */
+    html.dark .text-slate-900,
+    html.dark .text-slate-800,
+    html.dark .text-slate-700 {
+      color: #f1f5f9 !important;
+    }
+
+    html.dark .text-slate-600,
+    html.dark .text-slate-500 {
+      color: #94a3b8 !important;
+    }
+
+    html.dark .bg-slate-50\/90,
+    html.dark .bg-slate-100 {
+      background-color: #1e293b !important;
+      border-color: #334155 !important;
+    }
+
+    html.dark input,
+    html.dark select {
+      background-color: #0f172a !important;
+      color: #f1f5f9 !important;
+      border-color: #334155 !important;
+    }
+
+    html.dark .stat-card-rose { background: linear-gradient(135deg, rgba(244, 63, 94, 0.16), #151e32) !important; border-color: rgba(244, 63, 94, 0.28) !important; }
+    html.dark .stat-card-indigo { background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), #151e32) !important; border-color: rgba(99, 102, 241, 0.28) !important; }
+    html.dark .stat-card-amber { background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), #151e32) !important; border-color: rgba(245, 158, 11, 0.28) !important; }
+    html.dark .stat-card-emerald { background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), #151e32) !important; border-color: rgba(16, 185, 129, 0.28) !important; }
+
+    html.dark .quick-btn {
+      background-color: rgba(30, 41, 59, 0.85) !important;
+      border-color: rgba(51, 65, 85, 0.8) !important;
     }
 
     .btn-press {
@@ -81,11 +141,17 @@
     }
 
     .modal-backdrop {
-      background: rgba(15, 23, 42, 0.45);
-      backdrop-filter: blur(4px);
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(5px);
       padding-left: max(16px, calc(var(--safe-left) + 16px));
       padding-right: max(16px, calc(var(--safe-right) + 16px));
       padding-bottom: max(16px, var(--safe-bottom));
+    }
+
+    .modal-panel {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
     }
 
     ::-webkit-scrollbar {
@@ -97,17 +163,17 @@
 <body>
 
   <!-- Top Sticky Header -->
-  <header class="glass-header sticky top-0 z-30 border-b border-slate-200/70">
-    <div class="max-w-[540px] mx-auto flex items-center justify-between gap-3">
+  <header class="glass-header sticky top-0 z-30 border-b">
+    <div class="max-w-[540px] mx-auto flex items-center justify-between gap-2.5">
       <div class="flex items-center gap-3 min-w-0">
         <div id="babyAvatar" class="w-11 h-11 rounded-2xl bg-gradient-to-br from-rose-400 to-amber-300 flex items-center justify-center text-white font-extrabold text-lg shadow-sm shrink-0">
           👶
         </div>
         <div class="min-w-0">
           <div class="flex items-center gap-1.5">
-            <select id="babySelector" onchange="switchBaby(this.value)" class="font-extrabold text-base text-slate-900 bg-transparent focus:outline-none truncate max-w-[165px]">
+            <select id="babySelector" onchange="switchBaby(this.value)" class="font-extrabold text-base text-slate-900 !bg-transparent focus:outline-none truncate max-w-[145px]">
             </select>
-            <button onclick="openBabyModal()" title="Adaugă sau editează copil" class="text-xs bg-slate-200/80 hover:bg-slate-300/80 text-slate-700 font-bold px-2 py-0.5 rounded-lg shrink-0">
+            <button onclick="openBabyModal()" title="Adaugă sau editează copil" class="text-xs bg-slate-200/80 dark:bg-slate-700 text-slate-700 font-bold px-2 py-0.5 rounded-lg shrink-0">
               + Profil
             </button>
           </div>
@@ -115,9 +181,14 @@
         </div>
       </div>
 
-      <button onclick="switchTab('settings')" class="w-10 h-10 rounded-2xl bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 shadow-xs btn-press shrink-0" aria-label="Setări">
-        ⚙️
-      </button>
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="toggleDarkMode()" id="darkModeBtn" class="w-10 h-10 rounded-2xl card !p-0 flex items-center justify-center text-lg btn-press" aria-label="Mod noapte">
+          🌙
+        </button>
+        <button onclick="switchTab('settings')" class="w-10 h-10 rounded-2xl card !p-0 flex items-center justify-center text-slate-600 btn-press" aria-label="Setări">
+          ⚙️
+        </button>
+      </div>
     </div>
   </header>
 
@@ -139,39 +210,39 @@
 
       <!-- Daily Summary Cards -->
       <div class="grid grid-cols-2 gap-3.5">
-        <div class="card !p-4 bg-gradient-to-br from-rose-50/90 to-white border-rose-100">
+        <div class="card stat-card-rose !p-4 bg-gradient-to-br from-rose-50/90 to-white border-rose-100">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="text-xs font-bold text-rose-600">Hrănire azi</span>
+            <span class="text-xs font-bold text-rose-500">Hrănire azi</span>
             <span class="text-base">🍼</span>
           </div>
-          <div id="statFeedToday" class="text-xl font-extrabold text-slate-900">0 min / 0 ml</div>
+          <div id="statFeedToday" class="text-xl font-extrabold text-slate-900">0m / 0ml</div>
           <p id="statLastFeed" class="text-[11px] text-slate-500 mt-1 truncate">Nicio înregistrare</p>
         </div>
 
-        <div class="card !p-4 bg-gradient-to-br from-indigo-50/90 to-white border-indigo-100">
+        <div class="card stat-card-indigo !p-4 bg-gradient-to-br from-indigo-50/90 to-white border-indigo-100">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="text-xs font-bold text-indigo-600">Somn azi</span>
+            <span class="text-xs font-bold text-indigo-500">Somn azi</span>
             <span class="text-base">😴</span>
           </div>
           <div id="statSleepToday" class="text-xl font-extrabold text-slate-900">0h 0m</div>
           <p id="statLastSleep" class="text-[11px] text-slate-500 mt-1 truncate">Nicio înregistrare</p>
         </div>
 
-        <div class="card !p-4 bg-gradient-to-br from-amber-50/90 to-white border-amber-100">
+        <div class="card stat-card-amber !p-4 bg-gradient-to-br from-amber-50/90 to-white border-amber-100">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="text-xs font-bold text-amber-600">Scutece azi</span>
+            <span class="text-xs font-bold text-amber-500">Scutece azi</span>
             <span class="text-base">🧷</span>
           </div>
           <div id="statDiaperToday" class="text-xl font-extrabold text-slate-900">0 schimbări</div>
           <p id="statLastDiaper" class="text-[11px] text-slate-500 mt-1 truncate">Nicio înregistrare</p>
         </div>
 
-        <div class="card !p-4 bg-gradient-to-br from-emerald-50/90 to-white border-emerald-100">
+        <div class="card stat-card-emerald !p-4 bg-gradient-to-br from-emerald-50/90 to-white border-emerald-100">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="text-xs font-bold text-emerald-600">Pompare azi</span>
-            <span class="text-base">🧴</span>
+            <span class="text-xs font-bold text-emerald-500">Pompare / Activități</span>
+            <span class="text-base">🛁</span>
           </div>
-          <div id="statPumpToday" class="text-xl font-extrabold text-slate-900">0 ml</div>
+          <div id="statPumpToday" class="text-xl font-extrabold text-slate-900">0 ml • 0 act.</div>
           <p id="statLastGrowth" class="text-[11px] text-slate-500 mt-1 truncate">Greutate: —</p>
         </div>
       </div>
@@ -183,19 +254,19 @@
           <span class="text-[11px] font-medium text-slate-400">Start / Stop instant</span>
         </div>
         <div class="grid grid-cols-3 gap-2.5">
-          <button onclick="toggleTimer('breast_left')" id="btn-timer-breast_left" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-rose-50 border border-rose-100 text-rose-700">
+          <button onclick="toggleTimer('breast_left')" id="btn-timer-breast_left" class="quick-btn btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600">
             <span class="text-xl mb-1">🤱</span>
             <span class="text-xs font-bold">Sân Stâng</span>
             <span id="lbl-timer-breast_left" class="text-[11px] font-mono mt-0.5 text-rose-500">00:00</span>
           </button>
 
-          <button onclick="toggleTimer('breast_right')" id="btn-timer-breast_right" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-pink-50 border border-pink-100 text-pink-700">
+          <button onclick="toggleTimer('breast_right')" id="btn-timer-breast_right" class="quick-btn btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-pink-50 border border-pink-100 text-pink-600">
             <span class="text-xl mb-1">🤱</span>
             <span class="text-xs font-bold">Sân Drept</span>
             <span id="lbl-timer-breast_right" class="text-[11px] font-mono mt-0.5 text-pink-500">00:00</span>
           </button>
 
-          <button onclick="toggleTimer('sleep')" id="btn-timer-sleep" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-700">
+          <button onclick="toggleTimer('sleep')" id="btn-timer-sleep" class="quick-btn btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600">
             <span class="text-xl mb-1">🌙</span>
             <span class="text-xs font-bold">Somn</span>
             <span id="lbl-timer-sleep" class="text-[11px] font-mono mt-0.5 text-indigo-500">00:00</span>
@@ -206,43 +277,48 @@
       <!-- Quick Log Actions -->
       <div class="card space-y-3.5">
         <h2 class="text-sm font-extrabold text-slate-800">Adaugă în jurnal</h2>
-        <div class="grid grid-cols-4 gap-2.5">
-          <button onclick="openEntryModal('bottle')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-sky-50 border border-sky-100 text-sky-700">
+        <div class="grid grid-cols-3 gap-2.5">
+          <button onclick="openEntryModal('bottle')" class="quick-btn btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-sky-50 border border-sky-100 text-sky-600">
             <span class="text-2xl mb-1">🍼</span>
             <span class="text-[11px] font-bold">Biberon</span>
           </button>
 
-          <button onclick="openEntryModal('solid')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-orange-50 border border-orange-100 text-orange-700">
+          <button onclick="openEntryModal('solid')" class="quick-btn btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-orange-50 border border-orange-100 text-orange-600">
             <span class="text-2xl mb-1">🥣</span>
             <span class="text-[11px] font-bold">Solide</span>
           </button>
 
-          <button onclick="openEntryModal('diaper')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-amber-50 border border-amber-100 text-amber-700">
+          <button onclick="openEntryModal('diaper')" class="quick-btn btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-amber-50 border border-amber-100 text-amber-600">
             <span class="text-2xl mb-1">🧷</span>
             <span class="text-[11px] font-bold">Scutec</span>
           </button>
 
-          <button onclick="openEntryModal('pump')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-teal-50 border border-teal-100 text-teal-700">
+          <button onclick="openEntryModal('activity')" class="quick-btn btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-violet-50 border border-violet-100 text-violet-600">
+            <span class="text-2xl mb-1">🛁</span>
+            <span class="text-[11px] font-bold">Activități</span>
+          </button>
+
+          <button onclick="openEntryModal('pump')" class="quick-btn btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-teal-50 border border-teal-100 text-teal-600">
             <span class="text-2xl mb-1">🧴</span>
             <span class="text-[11px] font-bold">Pompare</span>
           </button>
 
-          <button onclick="openEntryModal('sleep_manual')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-700">
+          <button onclick="openEntryModal('sleep_manual')" class="quick-btn btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600">
             <span class="text-2xl mb-1">🛌</span>
             <span class="text-[11px] font-bold">Somn</span>
           </button>
 
-          <button onclick="openEntryModal('growth')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-700">
+          <button onclick="openEntryModal('growth')" class="quick-btn btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600">
             <span class="text-2xl mb-1">📏</span>
             <span class="text-[11px] font-bold">Creștere</span>
           </button>
 
-          <button onclick="openEntryModal('health')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-red-50 border border-red-100 text-red-700">
+          <button onclick="openEntryModal('health')" class="quick-btn btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-red-50 border border-red-100 text-red-600">
             <span class="text-2xl mb-1">🩺</span>
             <span class="text-[11px] font-bold">Sănătate</span>
           </button>
 
-          <button onclick="openEntryModal('breast_manual')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-rose-50 border border-rose-100 text-rose-700">
+          <button onclick="openEntryModal('breast_manual')" class="quick-btn btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600">
             <span class="text-2xl mb-1">⏱️</span>
             <span class="text-[11px] font-bold">Alăptare</span>
           </button>
@@ -253,7 +329,7 @@
       <div class="card space-y-3.5">
         <div class="flex items-center justify-between">
           <h2 class="text-sm font-extrabold text-slate-800">Activități recente</h2>
-          <button onclick="switchTab('history')" class="text-xs font-bold text-indigo-600">Vezi tot →</button>
+          <button onclick="switchTab('history')" class="text-xs font-bold text-indigo-500">Vezi tot →</button>
         </div>
         <div id="recentActivityList" class="space-y-2.5"></div>
       </div>
@@ -267,10 +343,11 @@
           <span id="historyCount" class="text-xs font-bold text-slate-400">0 intrări</span>
         </div>
         <div class="flex gap-2 overflow-x-auto pb-1">
-          <button onclick="setHistoryFilter('all')" data-filter="all" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shrink-0">Toate</button>
+          <button onclick="setHistoryFilter('all')" data-filter="all" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shrink-0">Toate</button>
           <button onclick="setHistoryFilter('feed')" data-filter="feed" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 shrink-0">Hrănire</button>
           <button onclick="setHistoryFilter('sleep')" data-filter="sleep" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 shrink-0">Somn</button>
           <button onclick="setHistoryFilter('diaper')" data-filter="diaper" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 shrink-0">Scutece</button>
+          <button onclick="setHistoryFilter('activity')" data-filter="activity" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 shrink-0">Activități</button>
           <button onclick="setHistoryFilter('growth')" data-filter="growth" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 shrink-0">Creștere</button>
           <button onclick="setHistoryFilter('health')" data-filter="health" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 shrink-0">Sănătate</button>
         </div>
@@ -299,6 +376,18 @@
 
     <!-- TAB: SETTINGS / SETĂRI -->
     <section id="tab-settings" class="hidden space-y-4">
+      <div class="card space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-base font-extrabold text-slate-900">Mod Noapte (Dark Mode)</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Protejează ochii în timpul alăptărilor de noapte.</p>
+          </div>
+          <button onclick="toggleDarkMode()" id="settingsDarkToggle" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold btn-press">
+            Activează
+          </button>
+        </div>
+      </div>
+
       <div class="card space-y-4">
         <h2 class="text-base font-extrabold text-slate-900">Profilul copilului activ</h2>
         <div class="space-y-3">
@@ -336,9 +425,9 @@
   </main>
 
   <!-- Bottom Navigation -->
-  <nav class="bottom-nav fixed bottom-0 left-0 right-0 z-30 border-t border-slate-200/80">
+  <nav class="bottom-nav fixed bottom-0 left-0 right-0 z-30 border-t">
     <div class="max-w-[540px] mx-auto grid grid-cols-4 gap-2">
-      <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-indigo-600 font-bold">
+      <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-indigo-500 font-bold">
         <span class="text-xl">🏠</span>
         <span class="text-[11px] mt-0.5">Acasă</span>
       </button>
@@ -359,7 +448,7 @@
 
   <!-- Entry Modal -->
   <div id="entryModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center">
-    <div class="bg-white w-full max-w-[480px] rounded-3xl p-6 shadow-2xl space-y-4 max-h-[88vh] overflow-y-auto">
+    <div class="modal-panel w-full max-w-[480px] rounded-3xl p-6 shadow-2xl space-y-4 max-h-[88vh] overflow-y-auto">
       <div class="flex items-center justify-between">
         <h3 id="modalTitle" class="text-lg font-extrabold text-slate-900">Adaugă activitate</h3>
         <button onclick="closeEntryModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold">✕</button>
@@ -374,7 +463,7 @@
 
   <!-- Add Baby Profile Modal -->
   <div id="babyModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center">
-    <div class="bg-white w-full max-w-[480px] rounded-3xl p-6 shadow-2xl space-y-4">
+    <div class="modal-panel w-full max-w-[480px] rounded-3xl p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between">
         <h3 class="text-lg font-extrabold text-slate-900">Profil nou copil</h3>
         <button onclick="closeBabyModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold">✕</button>
@@ -398,6 +487,7 @@
 
   <script>
     const STORAGE_KEY = 'kids_jurnal_data_v2';
+    const THEME_KEY = 'kids_jurnal_dark_mode';
 
     let state = {
       babies: [
@@ -412,6 +502,41 @@
     let currentHistoryFilter = 'all';
     let weeklyChartInstance = null;
     let growthChartInstance = null;
+
+    // Dark Mode
+    function applyTheme(isDark) {
+      const html = document.documentElement;
+      const metaTheme = document.getElementById('metaThemeColor');
+      const headerBtn = document.getElementById('darkModeBtn');
+      const settingsBtn = document.getElementById('settingsDarkToggle');
+
+      if (isDark) {
+        html.classList.add('dark');
+        if (metaTheme) metaTheme.setAttribute('content', '#0b1120');
+        if (headerBtn) headerBtn.textContent = '☀️';
+        if (settingsBtn) settingsBtn.textContent = 'Dezactivează (Mod Zi)';
+      } else {
+        html.classList.remove('dark');
+        if (metaTheme) metaTheme.setAttribute('content', '#f3f6fa');
+        if (headerBtn) headerBtn.textContent = '🌙';
+        if (settingsBtn) settingsBtn.textContent = 'Activează (Mod Noapte)';
+      }
+    }
+
+    function toggleDarkMode() {
+      const isDark = !document.documentElement.classList.contains('dark');
+      localStorage.setItem(THEME_KEY, isDark ? '1' : '0');
+      applyTheme(isDark);
+      if (!document.getElementById('tab-stats').classList.contains('hidden')) {
+        renderCharts();
+      }
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem(THEME_KEY);
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      applyTheme(saved !== null ? saved === '1' : prefersDark);
+    }
 
     function loadState() {
       try {
@@ -619,6 +744,11 @@
       return now.toISOString().slice(0, 16);
     }
 
+    function toggleCustomActivityField(val) {
+      const wrap = document.getElementById('customActivityWrap');
+      if (wrap) wrap.classList.toggle('hidden', val !== 'Altă activitate');
+    }
+
     function openEntryModal(type) {
       currentModalType = type;
       const modal = document.getElementById('entryModal');
@@ -654,6 +784,31 @@
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Cantitate (ml)</label>
             <input id="f_amount" type="number" value="120" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+          </div>
+          ${noteField}
+        `;
+      } else if (type === 'activity') {
+        title.textContent = '🛁 Activități (Baie, Ieșit afară etc.)';
+        fields.innerHTML = `
+          ${timeField}
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Tip activitate</label>
+            <select id="f_subtype" onchange="toggleCustomActivityField(this.value)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm">
+              <option value="Baie">🛁 Baie</option>
+              <option value="Ieșit afară / Plimbare">🌳 Ieșit afară / Plimbare</option>
+              <option value="Tummy time (pe burtică)">🧸 Tummy time (pe burtică)</option>
+              <option value="Joacă / Citit">🎨 Joacă / Citit</option>
+              <option value="Masaj / Gimnastică">💆 Masaj / Gimnastică</option>
+              <option value="Altă activitate">✨ Altă activitate...</option>
+            </select>
+          </div>
+          <div id="customActivityWrap" class="hidden">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Nume activitate</label>
+            <input id="f_custom_act" type="text" placeholder="Ex: Înot, Vizită bunici..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Durată (minute - opțional)</label>
+            <input id="f_duration" type="number" value="20" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
           </div>
           ${noteField}
         `;
@@ -747,15 +902,15 @@
           <div class="grid grid-cols-3 gap-2">
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Greutate (kg)</label>
-              <input id="f_weight" type="number" step="0.01" placeholder="6.5" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm" />
+              <input id="f_weight" type="number" step="0.01" placeholder="6.5" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Înălțime (cm)</label>
-              <input id="f_height" type="number" step="0.1" placeholder="64" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm" />
+              <input id="f_height" type="number" step="0.1" placeholder="64" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Cap (cm)</label>
-              <input id="f_head" type="number" step="0.1" placeholder="41" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm" />
+              <input id="f_head" type="number" step="0.1" placeholder="41" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
             </div>
           </div>
           ${noteField}
@@ -802,6 +957,17 @@
           type: 'bottle',
           subtype: document.getElementById('f_subtype').value,
           amountMl: Number(document.getElementById('f_amount').value) || 0
+        });
+      } else if (currentModalType === 'activity') {
+        const selected = document.getElementById('f_subtype').value;
+        const customName = document.getElementById('f_custom_act')?.value.trim();
+        const actName = selected === 'Altă activitate' ? (customName || 'Activitate') : selected;
+        state.entries.unshift({
+          ...base,
+          category: 'activity',
+          type: 'activity',
+          subtype: actName,
+          durationMin: Number(document.getElementById('f_duration').value) || 0
         });
       } else if (currentModalType === 'breast_manual') {
         state.entries.unshift({
@@ -877,32 +1043,45 @@
     }
 
     function describeEntry(e) {
-      if (e.type === 'bottle') return { icon: '🍼', title: `Biberon (${e.subtype})`, detail: `${e.amountMl} ml`, bg: 'bg-sky-50 text-sky-700' };
-      if (e.type === 'breast_left') return { icon: '🤱', title: 'Alăptare Sân Stâng', detail: `${e.durationMin} min`, bg: 'bg-rose-50 text-rose-700' };
-      if (e.type === 'breast_right') return { icon: '🤱', title: 'Alăptare Sân Drept', detail: `${e.durationMin} min`, bg: 'bg-pink-50 text-pink-700' };
-      if (e.type === 'Ambii sâni') return { icon: '🤱', title: 'Alăptare Ambii sâni', detail: `${e.durationMin} min`, bg: 'bg-rose-50 text-rose-700' };
-      if (e.type === 'solid') return { icon: '🥣', title: e.food, detail: e.subtype, bg: 'bg-orange-50 text-orange-700' };
-      if (e.type === 'diaper') return { icon: '🧷', title: 'Scutec schimbat', detail: e.subtype, bg: 'bg-amber-50 text-amber-700' };
-      if (e.type === 'pump') return { icon: '🧴', title: 'Pompare lapte', detail: `${e.amountMl} ml (S: ${e.leftMl} / D: ${e.rightMl})`, bg: 'bg-teal-50 text-teal-700' };
+      if (e.type === 'bottle') return { icon: '🍼', title: `Biberon (${e.subtype})`, detail: `${e.amountMl} ml`, bg: 'bg-sky-50 text-sky-600' };
+      if (e.type === 'activity') {
+        let icon = '🎨';
+        if (e.subtype && e.subtype.includes('Baie')) icon = '🛁';
+        else if (e.subtype && e.subtype.includes('afară')) icon = '🌳';
+        else if (e.subtype && e.subtype.includes('Tummy')) icon = '🧸';
+        else if (e.subtype && e.subtype.includes('Masaj')) icon = '💆';
+        return {
+          icon,
+          title: e.subtype || 'Activitate',
+          detail: e.durationMin ? `${e.durationMin} min` : 'Activitate înregistrată',
+          bg: 'bg-violet-50 text-violet-600'
+        };
+      }
+      if (e.type === 'breast_left') return { icon: '🤱', title: 'Alăptare Sân Stâng', detail: `${e.durationMin} min`, bg: 'bg-rose-50 text-rose-600' };
+      if (e.type === 'breast_right') return { icon: '🤱', title: 'Alăptare Sân Drept', detail: `${e.durationMin} min`, bg: 'bg-pink-50 text-pink-600' };
+      if (e.type === 'Ambii sâni') return { icon: '🤱', title: 'Alăptare Ambii sâni', detail: `${e.durationMin} min`, bg: 'bg-rose-50 text-rose-600' };
+      if (e.type === 'solid') return { icon: '🥣', title: e.food, detail: e.subtype, bg: 'bg-orange-50 text-orange-600' };
+      if (e.type === 'diaper') return { icon: '🧷', title: 'Scutec schimbat', detail: e.subtype, bg: 'bg-amber-50 text-amber-600' };
+      if (e.type === 'pump') return { icon: '🧴', title: 'Pompare lapte', detail: `${e.amountMl} ml (S: ${e.leftMl} / D: ${e.rightMl})`, bg: 'bg-teal-50 text-teal-600' };
       if (e.type === 'sleep') {
         const h = Math.floor((e.durationMin || 0) / 60);
         const m = (e.durationMin || 0) % 60;
-        return { icon: '😴', title: e.subtype || 'Somn', detail: h > 0 ? `${h}h ${m}m` : `${m} min`, bg: 'bg-indigo-50 text-indigo-700' };
+        return { icon: '😴', title: e.subtype || 'Somn', detail: h > 0 ? `${h}h ${m}m` : `${m} min`, bg: 'bg-indigo-50 text-indigo-600' };
       }
       if (e.type === 'growth') {
         const parts = [];
         if (e.weightKg) parts.push(`${e.weightKg} kg`);
         if (e.heightCm) parts.push(`${e.heightCm} cm`);
         if (e.headCm) parts.push(`Cap ${e.headCm} cm`);
-        return { icon: '📏', title: 'Creștere', detail: parts.join(' • ') || 'Măsurătoare', bg: 'bg-emerald-50 text-emerald-700' };
+        return { icon: '📏', title: 'Creștere', detail: parts.join(' • ') || 'Măsurătoare', bg: 'bg-emerald-50 text-emerald-600' };
       }
       if (e.type === 'health') {
         const parts = [];
         if (e.tempC) parts.push(`${e.tempC}°C`);
         if (e.med) parts.push(e.med);
-        return { icon: '🩺', title: 'Sănătate', detail: parts.join(' • ') || 'Notă medicală', bg: 'bg-red-50 text-red-700' };
+        return { icon: '🩺', title: 'Sănătate', detail: parts.join(' • ') || 'Notă medicală', bg: 'bg-red-50 text-red-600' };
       }
-      return { icon: '📝', title: 'Activitate', detail: '', bg: 'bg-slate-100 text-slate-700' };
+      return { icon: '📝', title: 'Activitate', detail: '', bg: 'bg-slate-100 text-slate-600' };
     }
 
     function renderDashboard() {
@@ -932,9 +1111,10 @@
       const lastDiaper = babyEntries.find(e => e.category === 'diaper');
       document.getElementById('statLastDiaper').textContent = lastDiaper ? `Ultimul: ${formatTimeAgo(lastDiaper.timestamp)}` : 'Nicio înregistrare';
 
-      // Pump & Growth
+      // Pump & Activities & Growth
       const pumpMl = todayEntries.filter(e => e.type === 'pump').reduce((acc, e) => acc + (e.amountMl || 0), 0);
-      document.getElementById('statPumpToday').textContent = `${pumpMl} ml`;
+      const actCount = todayEntries.filter(e => e.category === 'activity').length;
+      document.getElementById('statPumpToday').textContent = `${pumpMl} ml • ${actCount} act.`;
       const lastGrowth = babyEntries.find(e => e.category === 'growth' && e.weightKg);
       document.getElementById('statLastGrowth').textContent = lastGrowth ? `Greutate: ${lastGrowth.weightKg} kg` : 'Greutate: —';
 
@@ -950,7 +1130,7 @@
           return `
             <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50/90 border border-slate-100">
               <div class="flex items-center gap-3 min-w-0">
-                <div class="w-10 h-10 rounded-xl ${info.bg} flex items-center justify-center text-lg shrink-0">${info.icon}</div>
+                <div class="w-10 h-10 rounded-xl ${info.bg} dark:bg-slate-800 flex items-center justify-center text-lg shrink-0">${info.icon}</div>
                 <div class="min-w-0">
                   <div class="text-xs font-extrabold text-slate-800 truncate">${info.title}</div>
                   <div class="text-[11px] text-slate-500 truncate">${info.detail}${e.notes ? ' • ' + e.notes : ''}</div>
@@ -970,7 +1150,7 @@
       currentHistoryFilter = filter;
       document.querySelectorAll('.filter-chip').forEach(btn => {
         if (btn.dataset.filter === filter) {
-          btn.className = 'filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shrink-0';
+          btn.className = 'filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shrink-0';
         } else {
           btn.className = 'filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 shrink-0';
         }
@@ -999,7 +1179,7 @@
         return `
           <div class="card !p-3.5 flex items-center justify-between gap-3">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="w-11 h-11 rounded-2xl ${info.bg} flex items-center justify-center text-xl shrink-0">${info.icon}</div>
+              <div class="w-11 h-11 rounded-2xl ${info.bg} dark:bg-slate-800 flex items-center justify-center text-xl shrink-0">${info.icon}</div>
               <div class="min-w-0">
                 <div class="text-sm font-extrabold text-slate-900 truncate">${info.title}</div>
                 <div class="text-xs text-slate-500 truncate">${info.detail}</div>
@@ -1011,7 +1191,7 @@
                 <div class="text-xs font-bold text-slate-800">${timeLabel}</div>
                 <div class="text-[11px] text-slate-400">${dateLabel}</div>
               </div>
-              <button onclick="deleteEntry('${e.id}')" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 text-xs font-bold flex items-center justify-center">🗑️</button>
+              <button onclick="deleteEntry('${e.id}')" class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/50 text-red-500 text-xs font-bold flex items-center justify-center">🗑️</button>
             </div>
           </div>
         `;
@@ -1020,6 +1200,9 @@
 
     function renderCharts() {
       const babyEntries = state.entries.filter(e => e.babyId === state.activeBabyId);
+      const isDark = document.documentElement.classList.contains('dark');
+      const tickColor = isDark ? '#94a3b8' : '#64748b';
+      const gridColor = isDark ? 'rgba(51, 65, 85, 0.4)' : 'rgba(226, 232, 240, 0.7)';
 
       // Last 7 days
       const labels = [];
@@ -1052,9 +1235,11 @@
         },
         options: {
           responsive: true,
+          plugins: { legend: { labels: { color: tickColor } } },
           scales: {
-            y: { type: 'linear', position: 'left', beginAtZero: true },
-            y1: { type: 'linear', position: 'right', beginAtZero: true, grid: { drawOnChartArea: false } }
+            x: { ticks: { color: tickColor }, grid: { color: gridColor } },
+            y: { type: 'linear', position: 'left', beginAtZero: true, ticks: { color: tickColor }, grid: { color: gridColor } },
+            y1: { type: 'linear', position: 'right', beginAtZero: true, ticks: { color: tickColor }, grid: { drawOnChartArea: false } }
           }
         }
       });
@@ -1078,7 +1263,14 @@
             tension: 0.35
           }]
         },
-        options: { responsive: true }
+        options: {
+          responsive: true,
+          plugins: { legend: { labels: { color: tickColor } } },
+          scales: {
+            x: { ticks: { color: tickColor }, grid: { color: gridColor } },
+            y: { ticks: { color: tickColor }, grid: { color: gridColor } }
+          }
+        }
       });
     }
 
@@ -1088,10 +1280,10 @@
         const navBtn = document.getElementById(`nav-${t}`);
         if (t === tab) {
           navBtn.classList.remove('text-slate-400', 'font-semibold');
-          navBtn.classList.add('text-indigo-600', 'font-bold');
+          navBtn.classList.add('text-indigo-500', 'font-bold');
         } else {
           navBtn.classList.add('text-slate-400', 'font-semibold');
-          navBtn.classList.remove('text-indigo-600', 'font-bold');
+          navBtn.classList.remove('text-indigo-500', 'font-bold');
         }
       });
 
@@ -1161,6 +1353,7 @@
       renderHistory();
     }
 
+    initTheme();
     loadState();
     renderAll();
   </script>
