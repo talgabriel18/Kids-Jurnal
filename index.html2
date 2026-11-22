@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Kids Jurnal" />
+  <meta name="theme-color" content="#f3f6fa" id="metaThemeColor" />
+  <title>Kids Jurnal — Baby Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --safe-top: env(safe-area-inset-top, 12px);
+      --safe-bottom: env(safe-area-inset-bottom, 16px);
+      --safe-left: env(safe-area-inset-left, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+      --bg-page: #f3f6fa;
+      --bg-card: #ffffff;
+      --bg-header: rgba(243, 246, 250, 0.88);
+      --bg-nav: rgba(255, 255, 255, 0.94);
+      --border-subtle: rgba(226, 232, 240, 0.85);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    html.dark {
+      --bg-page: #0b1120;
+      --bg-card: #151e32;
+      --bg-header: rgba(11, 17, 32, 0.88);
+      --bg-nav: rgba(21, 30, 50, 0.95);
+      --border-subtle: rgba(51, 65, 85, 0.65);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      overflow-x: hidden;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .app-shell {
+      max-width: 540px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding-top: calc(var(--safe-top) + 12px);
+      padding-bottom: calc(var(--safe-bottom) + 96px);
+      padding-left: max(20px, calc(var(--safe-left) + 20px));
+      padding-right: max(20px, calc(var(--safe-right) + 20px));
+    }
+
+    .glass-header {
+      background: var(--bg-header);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding-top: calc(var(--safe-top) + 10px);
+      padding-bottom: 12px;
+      padding-left: max(20px, calc(var(--safe-left) + 20px));
+      padding-right: max(20px, calc(var(--safe-right) + 20px));
+      border-color: var(--border-subtle);
+    }
+
+    .bottom-nav {
+      background: var(--bg-nav);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding-top: 10px;
+      padding-bottom: max(12px, var(--safe-bottom));
+      padding-left: max(20px, calc(var(--safe-left) + 20px));
+      padding-right: max(20px, calc(var(--safe-right) + 20px));
+      border-color: var(--border-subtle);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.06);
+      border: 1px solid var(--border-subtle);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    html.dark .card {
+      box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Dark mode adaptive helpers */
+    html.dark .text-slate-900,
+    html.dark .text-slate-800,
+    html.dark .text-slate-700 {
+      color: #f1f5f9 !important;
+    }
+
+    html.dark .text-slate-600,
+    html.dark .text-slate-500 {
+      color: #94a3b8 !important;
+    }
+
+    html.dark .bg-slate-50\/90,
+    html.dark .bg-slate-100 {
+      background-color: #1e293b !important;
+      border-color: #334155 !important;
+    }
+
+    html.dark input,
+    html.dark select {
+      background-color: #0f172a !important;
+      color: #f1f5f9 !important;
+      border-color: #334155 !important;
+    }
+
+    html.dark .stat-card-rose { background: linear-gradient(135deg, rgba(244, 63, 94, 0.16), #151e32) !important; border-color: rgba(244, 63, 94, 0.2
