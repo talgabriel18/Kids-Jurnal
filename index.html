@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Kids Jurnal" />
-  <meta name="theme-color" content="#f3f6fa" id="metaThemeColor" />
+  <meta name="theme-color" content="#f8fafc" />
   <title>Kids Jurnal — Baby Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -19,23 +19,6 @@
       --safe-bottom: env(safe-area-inset-bottom, 16px);
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
-      --bg-page: #f3f6fa;
-      --bg-card: #ffffff;
-      --bg-header: rgba(243, 246, 250, 0.88);
-      --bg-nav: rgba(255, 255, 255, 0.94);
-      --border-subtle: rgba(226, 232, 240, 0.85);
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-    }
-
-    html.dark {
-      --bg-page: #0b1120;
-      --bg-card: #151e32;
-      --bg-header: rgba(11, 17, 32, 0.88);
-      --bg-nav: rgba(21, 30, 50, 0.95);
-      --border-subtle: rgba(51, 65, 85, 0.65);
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
     }
 
     * {
@@ -47,10 +30,9 @@
       margin: 0;
       padding: 0;
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--bg-page);
-      color: var(--text-main);
+      background-color: #f3f6fa;
+      color: #0f172a;
       overflow-x: hidden;
-      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
     .app-shell {
@@ -64,63 +46,1123 @@
     }
 
     .glass-header {
-      background: var(--bg-header);
+      background: rgba(243, 246, 250, 0.88);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       padding-top: calc(var(--safe-top) + 10px);
       padding-bottom: 12px;
       padding-left: max(20px, calc(var(--safe-left) + 20px));
       padding-right: max(20px, calc(var(--safe-right) + 20px));
-      border-color: var(--border-subtle);
     }
 
     .bottom-nav {
-      background: var(--bg-nav);
+      background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       padding-top: 10px;
       padding-bottom: max(12px, var(--safe-bottom));
       padding-left: max(20px, calc(var(--safe-left) + 20px));
       padding-right: max(20px, calc(var(--safe-right) + 20px));
-      border-color: var(--border-subtle);
     }
 
     .card {
-      background: var(--bg-card);
+      background: #ffffff;
       border-radius: 22px;
       padding: 18px;
-      box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.06);
-      border: 1px solid var(--border-subtle);
-      transition: background-color 0.25s ease, border-color 0.25s ease;
+      box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.05);
+      border: 1px solid rgba(226, 232, 240, 0.85);
     }
 
-    html.dark .card {
-      box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.35);
+    .btn-press {
+      transition: transform 0.14s ease, opacity 0.14s ease;
+    }
+    .btn-press:active {
+      transform: scale(0.96);
     }
 
-    /* Dark mode adaptive helpers */
-    html.dark .text-slate-900,
-    html.dark .text-slate-800,
-    html.dark .text-slate-700 {
-      color: #f1f5f9 !important;
+    .modal-backdrop {
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(4px);
+      padding-left: max(16px, calc(var(--safe-left) + 16px));
+      padding-right: max(16px, calc(var(--safe-right) + 16px));
+      padding-bottom: max(16px, var(--safe-bottom));
     }
 
-    html.dark .text-slate-600,
-    html.dark .text-slate-500 {
-      color: #94a3b8 !important;
+    ::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Header -->
+  <header class="glass-header sticky top-0 z-30 border-b border-slate-200/70">
+    <div class="max-w-[540px] mx-auto flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <div id="babyAvatar" class="w-11 h-11 rounded-2xl bg-gradient-to-br from-rose-400 to-amber-300 flex items-center justify-center text-white font-extrabold text-lg shadow-sm shrink-0">
+          👶
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
+            <select id="babySelector" onchange="switchBaby(this.value)" class="font-extrabold text-base text-slate-900 bg-transparent focus:outline-none truncate max-w-[165px]">
+            </select>
+            <button onclick="openBabyModal()" title="Adaugă sau editează copil" class="text-xs bg-slate-200/80 hover:bg-slate-300/80 text-slate-700 font-bold px-2 py-0.5 rounded-lg shrink-0">
+              + Profil
+            </button>
+          </div>
+          <p id="babyAgeText" class="text-xs text-slate-500 font-medium truncate">0 luni, 0 zile</p>
+        </div>
+      </div>
+
+      <button onclick="switchTab('settings')" class="w-10 h-10 rounded-2xl bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 shadow-xs btn-press shrink-0" aria-label="Setări">
+        ⚙️
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="app-shell space-y-5">
+
+    <!-- TAB: HOME / ACASĂ -->
+    <section id="tab-home" class="space-y-5">
+
+      <!-- Active Timers Banner -->
+      <div id="activeTimersCard" class="hidden card !bg-gradient-to-r from-indigo-600 to-violet-600 text-white border-0 shadow-lg shadow-indigo-500/20">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo-100 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-300 animate-ping"></span> Cronometre active
+          </span>
+        </div>
+        <div id="activeTimersList" class="space-y-2.5"></div>
+      </div>
+
+      <!-- Daily Summary Cards -->
+      <div class="grid grid-cols-2 gap-3.5">
+        <div class="card !p-4 bg-gradient-to-br from-rose-50/90 to-white border-rose-100">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-bold text-rose-600">Hrănire azi</span>
+            <span class="text-base">🍼</span>
+          </div>
+          <div id="statFeedToday" class="text-xl font-extrabold text-slate-900">0 min / 0 ml</div>
+          <p id="statLastFeed" class="text-[11px] text-slate-500 mt-1 truncate">Nicio înregistrare</p>
+        </div>
+
+        <div class="card !p-4 bg-gradient-to-br from-indigo-50/90 to-white border-indigo-100">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-bold text-indigo-600">Somn azi</span>
+            <span class="text-base">😴</span>
+          </div>
+          <div id="statSleepToday" class="text-xl font-extrabold text-slate-900">0h 0m</div>
+          <p id="statLastSleep" class="text-[11px] text-slate-500 mt-1 truncate">Nicio înregistrare</p>
+        </div>
+
+        <div class="card !p-4 bg-gradient-to-br from-amber-50/90 to-white border-amber-100">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-bold text-amber-600">Scutece azi</span>
+            <span class="text-base">🧷</span>
+          </div>
+          <div id="statDiaperToday" class="text-xl font-extrabold text-slate-900">0 schimbări</div>
+          <p id="statLastDiaper" class="text-[11px] text-slate-500 mt-1 truncate">Nicio înregistrare</p>
+        </div>
+
+        <div class="card !p-4 bg-gradient-to-br from-emerald-50/90 to-white border-emerald-100">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-bold text-emerald-600">Pompare azi</span>
+            <span class="text-base">🧴</span>
+          </div>
+          <div id="statPumpToday" class="text-xl font-extrabold text-slate-900">0 ml</div>
+          <p id="statLastGrowth" class="text-[11px] text-slate-500 mt-1 truncate">Greutate: —</p>
+        </div>
+      </div>
+
+      <!-- Quick Timers Section -->
+      <div class="card space-y-3.5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-extrabold text-slate-800">Cronometre rapide</h2>
+          <span class="text-[11px] font-medium text-slate-400">Start / Stop instant</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2.5">
+          <button onclick="toggleTimer('breast_left')" id="btn-timer-breast_left" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-rose-50 border border-rose-100 text-rose-700">
+            <span class="text-xl mb-1">🤱</span>
+            <span class="text-xs font-bold">Sân Stâng</span>
+            <span id="lbl-timer-breast_left" class="text-[11px] font-mono mt-0.5 text-rose-500">00:00</span>
+          </button>
+
+          <button onclick="toggleTimer('breast_right')" id="btn-timer-breast_right" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-pink-50 border border-pink-100 text-pink-700">
+            <span class="text-xl mb-1">🤱</span>
+            <span class="text-xs font-bold">Sân Drept</span>
+            <span id="lbl-timer-breast_right" class="text-[11px] font-mono mt-0.5 text-pink-500">00:00</span>
+          </button>
+
+          <button onclick="toggleTimer('sleep')" id="btn-timer-sleep" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-700">
+            <span class="text-xl mb-1">🌙</span>
+            <span class="text-xs font-bold">Somn</span>
+            <span id="lbl-timer-sleep" class="text-[11px] font-mono mt-0.5 text-indigo-500">00:00</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Log Actions -->
+      <div class="card space-y-3.5">
+        <h2 class="text-sm font-extrabold text-slate-800">Adaugă în jurnal</h2>
+        <div class="grid grid-cols-4 gap-2.5">
+          <button onclick="openEntryModal('bottle')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-sky-50 border border-sky-100 text-sky-700">
+            <span class="text-2xl mb-1">🍼</span>
+            <span class="text-[11px] font-bold">Biberon</span>
+          </button>
+
+          <button onclick="openEntryModal('solid')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-orange-50 border border-orange-100 text-orange-700">
+            <span class="text-2xl mb-1">🥣</span>
+            <span class="text-[11px] font-bold">Solide</span>
+          </button>
+
+          <button onclick="openEntryModal('diaper')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-amber-50 border border-amber-100 text-amber-700">
+            <span class="text-2xl mb-1">🧷</span>
+            <span class="text-[11px] font-bold">Scutec</span>
+          </button>
+
+          <button onclick="openEntryModal('pump')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-teal-50 border border-teal-100 text-teal-700">
+            <span class="text-2xl mb-1">🧴</span>
+            <span class="text-[11px] font-bold">Pompare</span>
+          </button>
+
+          <button onclick="openEntryModal('sleep_manual')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-700">
+            <span class="text-2xl mb-1">🛌</span>
+            <span class="text-[11px] font-bold">Somn</span>
+          </button>
+
+          <button onclick="openEntryModal('growth')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-700">
+            <span class="text-2xl mb-1">📏</span>
+            <span class="text-[11px] font-bold">Creștere</span>
+          </button>
+
+          <button onclick="openEntryModal('health')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-red-50 border border-red-100 text-red-700">
+            <span class="text-2xl mb-1">🩺</span>
+            <span class="text-[11px] font-bold">Sănătate</span>
+          </button>
+
+          <button onclick="openEntryModal('breast_manual')" class="btn-press flex flex-col items-center justify-center p-3 rounded-2xl bg-rose-50 border border-rose-100 text-rose-700">
+            <span class="text-2xl mb-1">⏱️</span>
+            <span class="text-[11px] font-bold">Alăptare</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Recent Activity Preview -->
+      <div class="card space-y-3.5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-extrabold text-slate-800">Activități recente</h2>
+          <button onclick="switchTab('history')" class="text-xs font-bold text-indigo-600">Vezi tot →</button>
+        </div>
+        <div id="recentActivityList" class="space-y-2.5"></div>
+      </div>
+    </section>
+
+    <!-- TAB: HISTORY / ISTORIC -->
+    <section id="tab-history" class="hidden space-y-4">
+      <div class="card space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base font-extrabold text-slate-900">Istoric activități</h2>
+          <span id="historyCount" class="text-xs font-bold text-slate-400">0 intrări</span>
+        </div>
+        <div class="flex gap-2 overflow-x-auto pb-1">
+          <button onclick="setHistoryFilter('all')" data-filter="all" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shrink-0">Toate</button>
+          <button onclick="setHistoryFilter('feed')" data-filter="feed" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 shrink-0">Hrănire</button>
+          <button onclick="setHistoryFilter('sleep')" data-filter="sleep" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 shrink-0">Somn</button>
+          <button onclick="setHistoryFilter('diaper')" data-filter="diaper" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 shrink-0">Scutece</button>
+          <button onclick="setHistoryFilter('growth')" data-filter="growth" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 shrink-0">Creștere</button>
+          <button onclick="setHistoryFilter('health')" data-filter="health" class="filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 shrink-0">Sănătate</button>
+        </div>
+      </div>
+
+      <div id="fullHistoryList" class="space-y-3"></div>
+    </section>
+
+    <!-- TAB: STATS / STATISTICI -->
+    <section id="tab-stats" class="hidden space-y-4">
+      <div class="card space-y-3">
+        <h2 class="text-base font-extrabold text-slate-900">Statistici ultimele 7 zile</h2>
+        <p class="text-xs text-slate-500">Evoluția zilnică pentru somn (ore) și lapte din biberon/pompare (ml).</p>
+        <div class="pt-2">
+          <canvas id="weeklyChart" height="210"></canvas>
+        </div>
+      </div>
+
+      <div class="card space-y-3">
+        <h2 class="text-base font-extrabold text-slate-900">Curba de creștere (Greutate kg)</h2>
+        <div class="pt-2">
+          <canvas id="growthChart" height="190"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: SETTINGS / SETĂRI -->
+    <section id="tab-settings" class="hidden space-y-4">
+      <div class="card space-y-4">
+        <h2 class="text-base font-extrabold text-slate-900">Profilul copilului activ</h2>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Nume</label>
+            <input id="editBabyName" type="text" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:border-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Data nașterii</label>
+            <input id="editBabyDob" type="date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:border-indigo-500" />
+          </div>
+          <div class="flex gap-2.5 pt-1">
+            <button onclick="saveCurrentBabyEdit()" class="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold btn-press">Salvează modificările</button>
+            <button onclick="deleteCurrentBaby()" class="px-4 py-2.5 rounded-xl bg-red-50 text-red-600 text-sm font-bold btn-press">Șterge</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card space-y-3.5">
+        <h2 class="text-base font-extrabold text-slate-900">Backup și Export Date</h2>
+        <p class="text-xs text-slate-500 leading-relaxed">Toate datele sunt salvate local în browserul telefonului tău. Poți exporta o copie de siguranță oricând.</p>
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="exportJSON()" class="py-3 px-4 rounded-xl bg-slate-900 text-white text-xs font-bold btn-press">Export JSON</button>
+          <button onclick="exportCSV()" class="py-3 px-4 rounded-xl bg-emerald-600 text-white text-xs font-bold btn-press">Export CSV (Excel)</button>
+        </div>
+        <div class="pt-1">
+          <label class="block w-full text-center py-3 px-4 rounded-xl border border-dashed border-slate-300 text-xs font-bold text-slate-700 cursor-pointer hover:bg-slate-50">
+            Importă backup JSON
+            <input type="file" accept=".json" onchange="importJSON(event)" class="hidden" />
+          </label>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav fixed bottom-0 left-0 right-0 z-30 border-t border-slate-200/80">
+    <div class="max-w-[540px] mx-auto grid grid-cols-4 gap-2">
+      <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-indigo-600 font-bold">
+        <span class="text-xl">🏠</span>
+        <span class="text-[11px] mt-0.5">Acasă</span>
+      </button>
+      <button onclick="switchTab('history')" id="nav-history" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 font-semibold">
+        <span class="text-xl">📋</span>
+        <span class="text-[11px] mt-0.5">Istoric</span>
+      </button>
+      <button onclick="switchTab('stats')" id="nav-stats" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 font-semibold">
+        <span class="text-xl">📊</span>
+        <span class="text-[11px] mt-0.5">Statistici</span>
+      </button>
+      <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 font-semibold">
+        <span class="text-xl">⚙️</span>
+        <span class="text-[11px] mt-0.5">Setări</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Entry Modal -->
+  <div id="entryModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center">
+    <div class="bg-white w-full max-w-[480px] rounded-3xl p-6 shadow-2xl space-y-4 max-h-[88vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <h3 id="modalTitle" class="text-lg font-extrabold text-slate-900">Adaugă activitate</h3>
+        <button onclick="closeEntryModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold">✕</button>
+      </div>
+      <div id="modalFields" class="space-y-3.5"></div>
+      <div class="pt-2 flex gap-2.5">
+        <button onclick="closeEntryModal()" class="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-700 text-sm font-bold">Anulează</button>
+        <button onclick="saveEntry()" class="flex-1 py-3 rounded-2xl bg-indigo-600 text-white text-sm font-bold shadow-md shadow-indigo-500/20">Salvează</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Baby Profile Modal -->
+  <div id="babyModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center">
+    <div class="bg-white w-full max-w-[480px] rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-extrabold text-slate-900">Profil nou copil</h3>
+        <button onclick="closeBabyModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold">✕</button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Nume copil</label>
+          <input id="newBabyName" type="text" placeholder="Ex: Sofia / Andrei" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Data nașterii</label>
+          <input id="newBabyDob" type="date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+        </div>
+      </div>
+      <div class="pt-2 flex gap-2.5">
+        <button onclick="closeBabyModal()" class="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-700 text-sm font-bold">Anulează</button>
+        <button onclick="createBaby()" class="flex-1 py-3 rounded-2xl bg-indigo-600 text-white text-sm font-bold">Creează profil</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'kids_jurnal_data_v2';
+
+    let state = {
+      babies: [
+        { id: 'baby_1', name: 'Bebe', dob: new Date().toISOString().split('T')[0] }
+      ],
+      activeBabyId: 'baby_1',
+      entries: [],
+      timers: {}
+    };
+
+    let currentModalType = null;
+    let currentHistoryFilter = 'all';
+    let weeklyChartInstance = null;
+    let growthChartInstance = null;
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.babies && parsed.babies.length) {
+            state = { ...state, ...parsed };
+          }
+        }
+      } catch (e) {
+        console.error('Eroare la încărcarea datelor:', e);
+      }
     }
 
-    html.dark .bg-slate-50\/90,
-    html.dark .bg-slate-100 {
-      background-color: #1e293b !important;
-      border-color: #334155 !important;
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
-    html.dark input,
-    html.dark select {
-      background-color: #0f172a !important;
-      color: #f1f5f9 !important;
-      border-color: #334155 !important;
+    function getActiveBaby() {
+      return state.babies.find(b => b.id === state.activeBabyId) || state.babies[0];
     }
 
-    html.dark .stat-card-rose { background: linear-gradient(135deg, rgba(244, 63, 94, 0.16), #151e32) !important; border-color: rgba(244, 63, 94, 0.2
+    function calculateAgeText(dobStr) {
+      if (!dobStr) return 'Vârstă nesetată';
+      const dob = new Date(dobStr);
+      const now = new Date();
+      let months = (now.getFullYear() - dob.getFullYear()) * 12 + (now.getMonth() - dob.getMonth());
+      let days = now.getDate() - dob.getDate();
+      if (days < 0) {
+        months -= 1;
+        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += prevMonth.getDate();
+      }
+      if (months < 0) return 'Nou-născut';
+      if (months === 0) return `${days} zile`;
+      return `${months} ${months === 1 ? 'lună' : 'luni'}, ${days} ${days === 1 ? 'zi' : 'zile'}`;
+    }
+
+    function formatDuration(sec) {
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const s = sec % 60;
+      if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function formatTimeAgo(isoStr) {
+      const diffMin = Math.floor((Date.now() - new Date(isoStr).getTime()) / 60000);
+      if (diffMin < 1) return 'acum câteva secunde';
+      if (diffMin < 60) return `acum ${diffMin} min`;
+      const h = Math.floor(diffMin / 60);
+      const m = diffMin % 60;
+      if (h < 24) return `acum ${h}h ${m}m`;
+      const d = Math.floor(h / 24);
+      return `acum ${d} ${d === 1 ? 'zi' : 'zile'}`;
+    }
+
+    function renderHeader() {
+      const selector = document.getElementById('babySelector');
+      selector.innerHTML = state.babies.map(b =>
+        `<option value="${b.id}" ${b.id === state.activeBabyId ? 'selected' : ''}>${b.name}</option>`
+      ).join('');
+      const baby = getActiveBaby();
+      document.getElementById('babyAgeText').textContent = calculateAgeText(baby.dob);
+      document.getElementById('editBabyName').value = baby.name;
+      document.getElementById('editBabyDob').value = baby.dob || '';
+    }
+
+    function switchBaby(id) {
+      state.activeBabyId = id;
+      saveState();
+      renderAll();
+    }
+
+    function openBabyModal() {
+      document.getElementById('newBabyName').value = '';
+      document.getElementById('newBabyDob').value = new Date().toISOString().split('T')[0];
+      document.getElementById('babyModal').classList.remove('hidden');
+    }
+
+    function closeBabyModal() {
+      document.getElementById('babyModal').classList.add('hidden');
+    }
+
+    function createBaby() {
+      const name = document.getElementById('newBabyName').value.trim();
+      const dob = document.getElementById('newBabyDob').value;
+      if (!name) return alert('Introdu numele copilului.');
+      const id = 'baby_' + Date.now();
+      state.babies.push({ id, name, dob });
+      state.activeBabyId = id;
+      saveState();
+      closeBabyModal();
+      renderAll();
+    }
+
+    function saveCurrentBabyEdit() {
+      const baby = getActiveBaby();
+      const name = document.getElementById('editBabyName').value.trim();
+      const dob = document.getElementById('editBabyDob').value;
+      if (!name) return alert('Numele nu poate fi gol.');
+      baby.name = name;
+      baby.dob = dob;
+      saveState();
+      renderAll();
+      alert('Profil actualizat!');
+    }
+
+    function deleteCurrentBaby() {
+      if (state.babies.length <= 1) return alert('Trebuie să existe cel puțin un profil.');
+      if (!confirm('Sigur ștergi acest profil și toate intrările lui?')) return;
+      const id = state.activeBabyId;
+      state.babies = state.babies.filter(b => b.id !== id);
+      state.entries = state.entries.filter(e => e.babyId !== id);
+      state.activeBabyId = state.babies[0].id;
+      saveState();
+      renderAll();
+    }
+
+    // Timers
+    function toggleTimer(type) {
+      const key = `${state.activeBabyId}_${type}`;
+      if (state.timers[key]) {
+        const start = state.timers[key];
+        const durationSec = Math.max(1, Math.floor((Date.now() - start) / 1000));
+        delete state.timers[key];
+
+        const entry = {
+          id: 'ent_' + Date.now(),
+          babyId: state.activeBabyId,
+          timestamp: new Date().toISOString(),
+          category: type === 'sleep' ? 'sleep' : 'feed',
+          type: type,
+          durationMin: Math.max(1, Math.round(durationSec / 60)),
+          notes: 'Înregistrat cu cronometrul'
+        };
+        state.entries.unshift(entry);
+        saveState();
+        renderAll();
+      } else {
+        state.timers[key] = Date.now();
+        saveState();
+        updateTimersUI();
+      }
+    }
+
+    function updateTimersUI() {
+      const types = ['breast_left', 'breast_right', 'sleep'];
+      const labels = {
+        breast_left: 'Alăptare Sân Stâng',
+        breast_right: 'Alăptare Sân Drept',
+        sleep: 'Somn în desfășurare'
+      };
+
+      const activeList = document.getElementById('activeTimersList');
+      const activeCard = document.getElementById('activeTimersCard');
+      let activeHtml = '';
+      let hasActive = false;
+
+      types.forEach(t => {
+        const key = `${state.activeBabyId}_${t}`;
+        const start = state.timers[key];
+        const lbl = document.getElementById(`lbl-timer-${t}`);
+        const btn = document.getElementById(`btn-timer-${t}`);
+
+        if (start) {
+          hasActive = true;
+          const sec = Math.floor((Date.now() - start) / 1000);
+          const formatted = formatDuration(sec);
+          if (lbl) lbl.textContent = formatted;
+          if (btn) btn.classList.add('ring-2', 'ring-indigo-500');
+
+          activeHtml += `
+            <div class="flex items-center justify-between bg-white/15 px-3.5 py-2.5 rounded-2xl">
+              <div>
+                <div class="text-xs font-bold">${labels[t]}</div>
+                <div class="text-lg font-mono font-extrabold">${formatted}</div>
+              </div>
+              <button onclick="toggleTimer('${t}')" class="px-3.5 py-1.5 rounded-xl bg-white text-indigo-700 text-xs font-extrabold btn-press">
+                Stop & Salvează
+              </button>
+            </div>
+          `;
+        } else {
+          if (lbl) lbl.textContent = '00:00';
+          if (btn) btn.classList.remove('ring-2', 'ring-indigo-500');
+        }
+      });
+
+      if (hasActive) {
+        activeCard.classList.remove('hidden');
+        activeList.innerHTML = activeHtml;
+      } else {
+        activeCard.classList.add('hidden');
+      }
+    }
+
+    setInterval(updateTimersUI, 1000);
+
+    // Modals for Manual Entries
+    function getNowLocalInput() {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      return now.toISOString().slice(0, 16);
+    }
+
+    function openEntryModal(type) {
+      currentModalType = type;
+      const modal = document.getElementById('entryModal');
+      const title = document.getElementById('modalTitle');
+      const fields = document.getElementById('modalFields');
+      const nowVal = getNowLocalInput();
+
+      const timeField = `
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Data și ora</label>
+          <input id="f_time" type="datetime-local" value="${nowVal}" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+        </div>
+      `;
+      const noteField = `
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Notițe (opțional)</label>
+          <input id="f_notes" type="text" placeholder="Observații..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+        </div>
+      `;
+
+      if (type === 'bottle') {
+        title.textContent = '🍼 Biberon';
+        fields.innerHTML = `
+          ${timeField}
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Tip lapte</label>
+            <select id="f_subtype" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm">
+              <option value="Lapte matern">Lapte matern</option>
+              <option value="Formulă">Formulă</option>
+              <option value="Apă / Ceai">Apă / Ceai</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Cantitate (ml)</label>
+            <input id="f_amount" type="number" value="120" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+          </div>
+          ${noteField}
+        `;
+      } else if (type === 'breast_manual') {
+        title.textContent = '🤱 Alăptare manuală';
+        fields.innerHTML = `
+          ${timeField}
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Partea</label>
+            <select id="f_subtype" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm">
+              <option value="breast_left">Sân Stâng</option>
+              <option value="breast_right">Sân Drept</option>
+              <option value="Ambii sâni">Ambii sâni</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Durată (minute)</label>
+            <input id="f_duration" type="number" value="15" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+          </div>
+          ${noteField}
+        `;
+      } else if (type === 'solid') {
+        title.textContent = '🥣 Mâncare solidă';
+        fields.innerHTML = `
+          ${timeField}
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Aliment / Masă</label>
+            <input id="f_food" type="text" placeholder="Ex: Piure morcov și cartof dulce" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Cantitate / Reacție</label>
+            <select id="f_reaction" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm">
+              <option value="A mâncat tot 😋">A mâncat tot 😋</option>
+              <option value="A gustat puțin 🙂">A gustat puțin 🙂</option>
+              <option value="A refuzat 🙅">A refuzat 🙅</option>
+            </select>
+          </div>
+          ${noteField}
+        `;
+      } else if (type === 'diaper') {
+        title.textContent = '🧷 Schimbare scutec';
+        fields.innerHTML = `
+          ${timeField}
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Tip scutec</label>
+            <select id="f_subtype" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm">
+              <option value="Ud (pipi)">💧 Ud (pipi)</option>
+              <option value="Murdar (caca)">💩 Murdar (caca)</option>
+              <option value="Mixt (ambele)">💧💩 Mixt (ambele)</option>
+            </select>
+          </div>
+          ${noteField}
+        `;
+      } else if (type === 'pump') {
+        title.textContent = '🧴 Pompare lapte';
+        fields.innerHTML = `
+          ${timeField}
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Stânga (ml)</label>
+              <input id="f_left" type="number" value="60" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Dreapta (ml)</label>
+              <input id="f_right" type="number" value="60" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+            </div>
+          </div>
+          ${noteField}
+        `;
+      } else if (type === 'sleep_manual') {
+        title.textContent = '🛌 Somn';
+        fields.innerHTML = `
+          ${timeField}
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Durată somn (minute)</label>
+            <input id="f_duration" type="number" value="60" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Tip somn</label>
+            <select id="f_subtype" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm">
+              <option value="Somn de zi">☀️ Somn de zi</option>
+              <option value="Somn de noapte">🌙 Somn de noapte</option>
+            </select>
+          </div>
+          ${noteField}
+        `;
+      } else if (type === 'growth') {
+        title.textContent = '📏 Măsurători creștere';
+        fields.innerHTML = `
+          ${timeField}
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Greutate (kg)</label>
+              <input id="f_weight" type="number" step="0.01" placeholder="6.5" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Înălțime (cm)</label>
+              <input id="f_height" type="number" step="0.1" placeholder="64" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Cap (cm)</label>
+              <input id="f_head" type="number" step="0.1" placeholder="41" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm" />
+            </div>
+          </div>
+          ${noteField}
+        `;
+      } else if (type === 'health') {
+        title.textContent = '🩺 Sănătate / Temperatură';
+        fields.innerHTML = `
+          ${timeField}
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Temperatură (°C - opțional)</label>
+            <input id="f_temp" type="number" step="0.1" placeholder="36.6" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Medicament / Vaccin / Simptom</label>
+            <input id="f_med" type="text" placeholder="Ex: Vitamina D3 / Paracetamol" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+          </div>
+          ${noteField}
+        `;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeEntryModal() {
+      document.getElementById('entryModal').classList.add('hidden');
+    }
+
+    function saveEntry() {
+      const timeVal = document.getElementById('f_time')?.value;
+      const timestamp = timeVal ? new Date(timeVal).toISOString() : new Date().toISOString();
+      const notes = document.getElementById('f_notes')?.value.trim() || '';
+
+      const base = {
+        id: 'ent_' + Date.now(),
+        babyId: state.activeBabyId,
+        timestamp,
+        notes
+      };
+
+      if (currentModalType === 'bottle') {
+        state.entries.unshift({
+          ...base,
+          category: 'feed',
+          type: 'bottle',
+          subtype: document.getElementById('f_subtype').value,
+          amountMl: Number(document.getElementById('f_amount').value) || 0
+        });
+      } else if (currentModalType === 'breast_manual') {
+        state.entries.unshift({
+          ...base,
+          category: 'feed',
+          type: document.getElementById('f_subtype').value,
+          durationMin: Number(document.getElementById('f_duration').value) || 0
+        });
+      } else if (currentModalType === 'solid') {
+        state.entries.unshift({
+          ...base,
+          category: 'feed',
+          type: 'solid',
+          food: document.getElementById('f_food').value.trim() || 'Masă solidă',
+          subtype: document.getElementById('f_reaction').value
+        });
+      } else if (currentModalType === 'diaper') {
+        state.entries.unshift({
+          ...base,
+          category: 'diaper',
+          type: 'diaper',
+          subtype: document.getElementById('f_subtype').value
+        });
+      } else if (currentModalType === 'pump') {
+        const l = Number(document.getElementById('f_left').value) || 0;
+        const r = Number(document.getElementById('f_right').value) || 0;
+        state.entries.unshift({
+          ...base,
+          category: 'feed',
+          type: 'pump',
+          leftMl: l,
+          rightMl: r,
+          amountMl: l + r
+        });
+      } else if (currentModalType === 'sleep_manual') {
+        state.entries.unshift({
+          ...base,
+          category: 'sleep',
+          type: 'sleep',
+          subtype: document.getElementById('f_subtype').value,
+          durationMin: Number(document.getElementById('f_duration').value) || 0
+        });
+      } else if (currentModalType === 'growth') {
+        state.entries.unshift({
+          ...base,
+          category: 'growth',
+          type: 'growth',
+          weightKg: Number(document.getElementById('f_weight').value) || null,
+          heightCm: Number(document.getElementById('f_height').value) || null,
+          headCm: Number(document.getElementById('f_head').value) || null
+        });
+      } else if (currentModalType === 'health') {
+        state.entries.unshift({
+          ...base,
+          category: 'health',
+          type: 'health',
+          tempC: Number(document.getElementById('f_temp').value) || null,
+          med: document.getElementById('f_med').value.trim()
+        });
+      }
+
+      state.entries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      saveState();
+      closeEntryModal();
+      renderAll();
+    }
+
+    function deleteEntry(id) {
+      if (!confirm('Ștergi această înregistrare?')) return;
+      state.entries = state.entries.filter(e => e.id !== id);
+      saveState();
+      renderAll();
+    }
+
+    function describeEntry(e) {
+      if (e.type === 'bottle') return { icon: '🍼', title: `Biberon (${e.subtype})`, detail: `${e.amountMl} ml`, bg: 'bg-sky-50 text-sky-700' };
+      if (e.type === 'breast_left') return { icon: '🤱', title: 'Alăptare Sân Stâng', detail: `${e.durationMin} min`, bg: 'bg-rose-50 text-rose-700' };
+      if (e.type === 'breast_right') return { icon: '🤱', title: 'Alăptare Sân Drept', detail: `${e.durationMin} min`, bg: 'bg-pink-50 text-pink-700' };
+      if (e.type === 'Ambii sâni') return { icon: '🤱', title: 'Alăptare Ambii sâni', detail: `${e.durationMin} min`, bg: 'bg-rose-50 text-rose-700' };
+      if (e.type === 'solid') return { icon: '🥣', title: e.food, detail: e.subtype, bg: 'bg-orange-50 text-orange-700' };
+      if (e.type === 'diaper') return { icon: '🧷', title: 'Scutec schimbat', detail: e.subtype, bg: 'bg-amber-50 text-amber-700' };
+      if (e.type === 'pump') return { icon: '🧴', title: 'Pompare lapte', detail: `${e.amountMl} ml (S: ${e.leftMl} / D: ${e.rightMl})`, bg: 'bg-teal-50 text-teal-700' };
+      if (e.type === 'sleep') {
+        const h = Math.floor((e.durationMin || 0) / 60);
+        const m = (e.durationMin || 0) % 60;
+        return { icon: '😴', title: e.subtype || 'Somn', detail: h > 0 ? `${h}h ${m}m` : `${m} min`, bg: 'bg-indigo-50 text-indigo-700' };
+      }
+      if (e.type === 'growth') {
+        const parts = [];
+        if (e.weightKg) parts.push(`${e.weightKg} kg`);
+        if (e.heightCm) parts.push(`${e.heightCm} cm`);
+        if (e.headCm) parts.push(`Cap ${e.headCm} cm`);
+        return { icon: '📏', title: 'Creștere', detail: parts.join(' • ') || 'Măsurătoare', bg: 'bg-emerald-50 text-emerald-700' };
+      }
+      if (e.type === 'health') {
+        const parts = [];
+        if (e.tempC) parts.push(`${e.tempC}°C`);
+        if (e.med) parts.push(e.med);
+        return { icon: '🩺', title: 'Sănătate', detail: parts.join(' • ') || 'Notă medicală', bg: 'bg-red-50 text-red-700' };
+      }
+      return { icon: '📝', title: 'Activitate', detail: '', bg: 'bg-slate-100 text-slate-700' };
+    }
+
+    function renderDashboard() {
+      const babyEntries = state.entries.filter(e => e.babyId === state.activeBabyId);
+      const todayStr = new Date().toISOString().split('T')[0];
+      const todayEntries = babyEntries.filter(e => e.timestamp.startsWith(todayStr));
+
+      // Feed today
+      let feedMin = 0, bottleMl = 0;
+      todayEntries.forEach(e => {
+        if (e.type === 'bottle') bottleMl += (e.amountMl || 0);
+        if (e.type === 'breast_left' || e.type === 'breast_right' || e.type === 'Ambii sâni') feedMin += (e.durationMin || 0);
+      });
+      document.getElementById('statFeedToday').textContent = `${feedMin}m / ${bottleMl}ml`;
+      const lastFeed = babyEntries.find(e => e.category === 'feed' && e.type !== 'pump');
+      document.getElementById('statLastFeed').textContent = lastFeed ? `Ultima: ${formatTimeAgo(lastFeed.timestamp)}` : 'Nicio înregistrare';
+
+      // Sleep today
+      const sleepMin = todayEntries.filter(e => e.category === 'sleep').reduce((acc, e) => acc + (e.durationMin || 0), 0);
+      document.getElementById('statSleepToday').textContent = `${Math.floor(sleepMin / 60)}h ${sleepMin % 60}m`;
+      const lastSleep = babyEntries.find(e => e.category === 'sleep');
+      document.getElementById('statLastSleep').textContent = lastSleep ? `Ultimul: ${formatTimeAgo(lastSleep.timestamp)}` : 'Nicio înregistrare';
+
+      // Diapers today
+      const diaperCount = todayEntries.filter(e => e.category === 'diaper').length;
+      document.getElementById('statDiaperToday').textContent = `${diaperCount} ${diaperCount === 1 ? 'schimbare' : 'schimbări'}`;
+      const lastDiaper = babyEntries.find(e => e.category === 'diaper');
+      document.getElementById('statLastDiaper').textContent = lastDiaper ? `Ultimul: ${formatTimeAgo(lastDiaper.timestamp)}` : 'Nicio înregistrare';
+
+      // Pump & Growth
+      const pumpMl = todayEntries.filter(e => e.type === 'pump').reduce((acc, e) => acc + (e.amountMl || 0), 0);
+      document.getElementById('statPumpToday').textContent = `${pumpMl} ml`;
+      const lastGrowth = babyEntries.find(e => e.category === 'growth' && e.weightKg);
+      document.getElementById('statLastGrowth').textContent = lastGrowth ? `Greutate: ${lastGrowth.weightKg} kg` : 'Greutate: —';
+
+      // Recent list
+      const recentContainer = document.getElementById('recentActivityList');
+      const recent = babyEntries.slice(0, 5);
+      if (!recent.length) {
+        recentContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Nu există activități înregistrate încă.</p>`;
+      } else {
+        recentContainer.innerHTML = recent.map(e => {
+          const info = describeEntry(e);
+          const timeFormatted = new Date(e.timestamp).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
+          return `
+            <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50/90 border border-slate-100">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-xl ${info.bg} flex items-center justify-center text-lg shrink-0">${info.icon}</div>
+                <div class="min-w-0">
+                  <div class="text-xs font-extrabold text-slate-800 truncate">${info.title}</div>
+                  <div class="text-[11px] text-slate-500 truncate">${info.detail}${e.notes ? ' • ' + e.notes : ''}</div>
+                </div>
+              </div>
+              <div class="text-right shrink-0 ml-2">
+                <div class="text-xs font-bold text-slate-700">${timeFormatted}</div>
+                <div class="text-[10px] text-slate-400">${formatTimeAgo(e.timestamp)}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function setHistoryFilter(filter) {
+      currentHistoryFilter = filter;
+      document.querySelectorAll('.filter-chip').forEach(btn => {
+        if (btn.dataset.filter === filter) {
+          btn.className = 'filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shrink-0';
+        } else {
+          btn.className = 'filter-chip px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 shrink-0';
+        }
+      });
+      renderHistory();
+    }
+
+    function renderHistory() {
+      let list = state.entries.filter(e => e.babyId === state.activeBabyId);
+      if (currentHistoryFilter !== 'all') {
+        list = list.filter(e => e.category === currentHistoryFilter);
+      }
+      document.getElementById('historyCount').textContent = `${list.length} intrări`;
+      const container = document.getElementById('fullHistoryList');
+
+      if (!list.length) {
+        container.innerHTML = `<div class="card text-center py-8 text-xs text-slate-400">Nicio înregistrare pentru filtrul selectat.</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(e => {
+        const info = describeEntry(e);
+        const dt = new Date(e.timestamp);
+        const dateLabel = dt.toLocaleDateString('ro-RO', { day: '2-digit', month: 'short' });
+        const timeLabel = dt.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
+        return `
+          <div class="card !p-3.5 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-11 h-11 rounded-2xl ${info.bg} flex items-center justify-center text-xl shrink-0">${info.icon}</div>
+              <div class="min-w-0">
+                <div class="text-sm font-extrabold text-slate-900 truncate">${info.title}</div>
+                <div class="text-xs text-slate-500 truncate">${info.detail}</div>
+                ${e.notes ? `<div class="text-[11px] text-slate-400 italic truncate mt-0.5">${e.notes}</div>` : ''}
+              </div>
+            </div>
+            <div class="flex items-center gap-2.5 shrink-0">
+              <div class="text-right">
+                <div class="text-xs font-bold text-slate-800">${timeLabel}</div>
+                <div class="text-[11px] text-slate-400">${dateLabel}</div>
+              </div>
+              <button onclick="deleteEntry('${e.id}')" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 text-xs font-bold flex items-center justify-center">🗑️</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderCharts() {
+      const babyEntries = state.entries.filter(e => e.babyId === state.activeBabyId);
+
+      // Last 7 days
+      const labels = [];
+      const sleepData = [];
+      const milkData = [];
+
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const iso = d.toISOString().split('T')[0];
+        labels.push(d.toLocaleDateString('ro-RO', { weekday: 'short' }));
+
+        const dayEntries = babyEntries.filter(e => e.timestamp.startsWith(iso));
+        const sleepHrs = dayEntries.filter(e => e.category === 'sleep').reduce((acc, e) => acc + (e.durationMin || 0), 0) / 60;
+        const ml = dayEntries.filter(e => e.type === 'bottle' || e.type === 'pump').reduce((acc, e) => acc + (e.amountMl || 0), 0);
+
+        sleepData.push(Number(sleepHrs.toFixed(1)));
+        milkData.push(ml);
+      }
+
+      if (weeklyChartInstance) weeklyChartInstance.destroy();
+      weeklyChartInstance = new Chart(document.getElementById('weeklyChart'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            { label: 'Somn (ore)', data: sleepData, backgroundColor: '#6366f1', borderRadius: 6, yAxisID: 'y' },
+            { label: 'Lapte (ml)', data: milkData, backgroundColor: '#38bdf8', borderRadius: 6, yAxisID: 'y1' }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { type: 'linear', position: 'left', beginAtZero: true },
+            y1: { type: 'linear', position: 'right', beginAtZero: true, grid: { drawOnChartArea: false } }
+          }
+        }
+      });
+
+      // Growth chart
+      const growthEntries = babyEntries
+        .filter(e => e.category === 'growth' && e.weightKg)
+        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+      if (growthChartInstance) growthChartInstance.destroy();
+      growthChartInstance = new Chart(document.getElementById('growthChart'), {
+        type: 'line',
+        data: {
+          labels: growthEntries.length ? growthEntries.map(e => new Date(e.timestamp).toLocaleDateString('ro-RO', { day: '2-digit', month: 'short' })) : ['Fără date'],
+          datasets: [{
+            label: 'Greutate (kg)',
+            data: growthEntries.length ? growthEntries.map(e => e.weightKg) : [0],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.15)',
+            fill: true,
+            tension: 0.35
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+
+    function switchTab(tab) {
+      ['home', 'history', 'stats', 'settings'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
+        const navBtn = document.getElementById(`nav-${t}`);
+        if (t === tab) {
+          navBtn.classList.remove('text-slate-400', 'font-semibold');
+          navBtn.classList.add('text-indigo-600', 'font-bold');
+        } else {
+          navBtn.classList.add('text-slate-400', 'font-semibold');
+          navBtn.classList.remove('text-indigo-600', 'font-bold');
+        }
+      });
+
+      if (tab === 'history') renderHistory();
+      if (tab === 'stats') renderCharts();
+    }
+
+    // Export / Import
+    function exportJSON() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `kids-jurnal-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+    }
+
+    function exportCSV() {
+      const rows = [['Data', 'Ora', 'Categorie', 'Tip', 'Detalii', 'Cantitate_ml', 'Durata_min', 'Greutate_kg', 'Notite']];
+      state.entries.filter(e => e.babyId === state.activeBabyId).forEach(e => {
+        const dt = new Date(e.timestamp);
+        rows.push([
+          dt.toLocaleDateString('ro-RO'),
+          dt.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' }),
+          e.category || '',
+          e.type || '',
+          e.subtype || e.food || e.med || '',
+          e.amountMl || '',
+          e.durationMin || '',
+          e.weightKg || '',
+          `"${(e.notes || '').replace(/"/g, '""')}"`
+        ]);
+      });
+      const csv = rows.map(r => r.join(',')).join('\n');
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `kids-jurnal-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+    }
+
+    function importJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && parsed.babies) {
+            state = parsed;
+            saveState();
+            renderAll();
+            alert('Datele au fost importate cu succes!');
+          }
+        } catch (err) {
+          alert('Fișier JSON invalid.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function renderAll() {
+      renderHeader();
+      updateTimersUI();
+      renderDashboard();
+      renderHistory();
+    }
+
+    loadState();
+    renderAll();
+  </script>
+</body>
+</html>
